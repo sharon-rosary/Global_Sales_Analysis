@@ -1,0 +1,399 @@
+---
+title: ''
+author: "Sharon Rosary"
+date: ""
+output: html_document
+---
+
+<!---
+Title
+--->
+
+<P><BR>
+<CENTER>
+![Northeastern logo1](C:\Users\appol\OneDrive\Documents\NEU_CPS_logo.jpg)
+<PR><BR>
+![Northeastern logo2](C:\Users\appol\OneDrive\Documents\NEU_logo.png)
+<FONT SIZE=5.5, COLOR="BLACK"><BR>Project 6 Report</FONT><BR>
+<FONT SIZE=4.5, COLOR="BLACK">
+<BR>Sharon Appoline Rosary
+<BR>ALY6000-70592 SEC 11 Introduction to Analytics
+<BR>Northeastern University
+<BR> Instructor: Dee Chiluiza Reyes
+<BR>Date:`r format(Sys.time(), "%d %B, %Y")`
+</FONT>
+</CENTER>
+
+
+<!---
+Libraries
+--->
+
+```{r libray setup, message=FALSE, include=FALSE, warning=FALSE }
+# Libraries
+library(readxl)
+library(knitr)
+library(RColorBrewer)
+library(ggplot2)
+library(dplyr)
+#Import dataset sales2020 
+sales2020 <- read_excel("C:/ALY6000 R Project/Data Sets/Project6Data.xlsx")
+View(sales2020)
+```
+<P>
+<FONT SIZE=5, COLOR="#9e1306"><B>Introduction</B></FONT>
+<P>
+<FONT SIZE=3.5>
+Data Analytics in Retail sector can enhance operations and increase sales. It can also help the business to optimize pricing by analysing competitive pricing and discount strategies(Barash R,2019).Few applications of bid data analytics in retail industry include: Optimized staffing through data collected from local events and shopping patterns, Fraud reduction and Timely Inventory analysis(Hooda S,2021).
+<p>
+The data set used in this report contains details about global sales of a store company in 2020.There are word-wide customers(from Australia, Argentia, Canada, United States of America, United Kingdom, etc ) who purchased products from the store company.There are three categories under department i.e., Furniture, Office supplies and Technology which are further classified into sub-categories(Division) like Accessories, Phones, Paper,Furnishings,etc.
+<P>
+The data set contains numerical variables like price, total sales, quantity, total sales and shipping cost, etc and categorical variables like Market, Segment, Department and division, etc.
+The sales and profits of the company are included in the data set where Samsung smart phones under Technology department had the maximum sales of (29,300 USD approx.) recorded in LATAM, South America and the least sales($350 USD approx.) was recorded by BCardinal Poly Divider Pockets for Ring Binders under Office Supplies department.
+In Africa, more number of BIC Canvas(17 approx.) under Art department were sold making it the maximum number of products sold in 2020.
+<P>
+One of the advantages of using Analytics is that statistical measures can be easily recorded irrespective of the area of organizations being globe-wise.These statistical information can be collated and presented to the organization so that they can focus on areas where they may be missing and improve their sales focusing at the customer tendencies.
+<P>
+From the data set, we can recognize One discrepancy i.e.,Profit attribute in which there are negative values. The records containing negative profits also indicate losses occurred by sales of a particular product. We can focus on that area along with departments for instance, we can identify the kind of product that brings losses and at the same time we can come up with a solution to limit those losses and increase the profits of the business.
+<P>
+In this assignment, I will use Exploratory Data Analysis to understand and observe the variables in the data set. I will try to get familiar with the angles that can cause losses to the business.Data interpretation using statistical measures and data presentation using charts or graphs are used to support the analysis of the given problem. Hence, filtering out some factors influencing the losses incurred.
+<P>
+I will be using Rmarkdown, tables, ggplot, bar plot, histogram, box plot, pie chart and scatter plot to support the analysis.
+</FONT>
+
+
+<P>
+<BR><FONT SIZE=5, COLOR="#9e1306"><B>Analysis</B></FONT>
+<P>
+<FONT SIZE=4><B>Task 1: Descriptive statistics of five numerical variables. </B></FONT>
+<BR><FONT SIZE=3.5>I chose numerical variables Sales, Quantity, Discount, Profit and Shipping Cost for which descriptive statistics(mean, median, Standard Deviation and Range) are calculated and presented in the below table.</FONT>
+
+```{r Task1 To present descriptive statistics of the numerical variables I chose}
+#Calculate descriptive statistics of numerical variables.
+stat_mean=c(mean(sales2020$Sales_Total),mean(sales2020$Quantity),mean(sales2020$Discount),mean(sales2020$Profits),mean(sales2020$ShippingCost_Product))
+stat_median=c(median(sales2020$Sales_Total),median(sales2020$Quantity),median(sales2020$Discount),median(sales2020$Profits),median(sales2020$ShippingCost_Product))
+stat_sd=c(sd(sales2020$Sales_Total),sd(sales2020$Quantity),sd(sales2020$Discount),sd(sales2020$Profits),sd(sales2020$ShippingCost_Product))
+stat_range=c(max(sales2020$Sales_Total)-min(sales2020$Sales_Total),max(sales2020$Quantity)-min(sales2020$Quantity),max(sales2020$Discount)-min(sales2020$Discount),max(sales2020$Profits)-min(sales2020$Profits),
+             max(sales2020$ShippingCost_Product)-min(sales2020$ShippingCost_Product))
+sales <- c(stat_mean,stat_median,stat_sd,stat_range)
+#create the matrix
+sales_matrix <- matrix(sales, nrow=4,byrow= TRUE)
+colnames(sales_matrix) <- c("Sales","Quantity","Discount","Profit","Shipping Cost")
+rownames(sales_matrix) <- c("Mean","Median","Standard Deviation","Range")
+#The matrix is presented in a table format.
+knitr::kable(sales_matrix)
+```
+
+<FONT SIZE=3.5><B>Observations:</B> We can infer that mean, median, standard deviation and range for sales is comparatively higher than other numerical variables that I chose.</FONT>
+
+<BR><FONT SIZE=4><B>Task 2: Comparison of numerical variables data using box plot and histogram. </B></FONT>
+<FONT SIZE=3.5>
+<BR>The numerical variables that I chose in step 1 are presented parallel using a box plot and histogram.
+<P><B>2.1 Box plot and histogram of numerical variable total sales.</B>
+</FONT>
+
+```{r Task 2.1 Boxplot and histogram of variable total sales}
+#Present a box plot of total sales
+par(mfcol=c(1,2),mai=c(1.6,1,0.4,2),mar=c(6.5, 6.5, 3, 4))
+totsl_bar=boxplot(sales2020$Sales_Total,
+        main="Box plot of total sales in sales2020",
+        cex.main=1,
+        xlab="Total Sales",
+        col=brewer.pal(4,"PRGn"),
+        las=1)
+#Present a histogram of total sales
+totsl_hist=hist(sales2020$Sales_Total,
+        main="Histogram of total sales in sales2020",
+        cex.main=1,
+        xlab="Total Sales",
+        ylab="Frequency",
+        col=brewer.pal(8,"PuRd"),
+        breaks=15)
+```
+<FONT SIZE=3.5>
+<BR>The above boxplot and histogram depict that majority of the total sales(more than 75%) lies within 0 and 5000 and we can also observe that less sales lies between 10,000 and 30,000 approximately.
+
+<P>
+<BR><B>2.2 Boxplot and histogram of numerical variable Quantity.</B>
+</FONT>
+```{r Task 2.2 Boxplot and histogram of variable Quantity}
+#Present a box plot of), Quantity
+par(mfrow=c(1,2),mai=c(1.6,1,0,2),mar=c(6.5, 6.5, 3, 4))
+qty_bar=boxplot(sales2020$Quantity,
+        main="Box plot of Quantity",
+        cex.main=1,
+        xlab="Quantity of products",
+        col=brewer.pal(4,"PRGn"),
+        las=1)
+#Present a histogram of Quantity
+qty_hist=hist(sales2020$Quantity,
+        main="Histogram of Quantity",
+        cex.main=1,
+        xlab="Quantity of Products",
+        ylab="Count",
+        ylim=c(0,250),
+        col=brewer.pal(8,"PuRd"),
+        breaks=15)
+```
+<FONT SIZE=3.5>
+<BR>The above boxplot and histogram depict that 75% of quantity lies within 3 to 8 approximately and there are outliers(data points that lie at an abnormal distance from other values in the distribution) present in the distribution.This distribution is skewed right since majority of data points lie above the median.
+
+<P>
+<BR><B>2.3 Boxplot and histogram of numerical variable Discounts.</B>
+</FONT>
+```{r Task 2.3 Boxplot and histogram of variable Discounts}
+#Present a box plot of all discounts
+par(mfcol=c(1,2),mai=c(1.6,1,0.4,6),mar=c(6.5, 6.5, 3, 3.5))
+disc_bar=boxplot(sales2020$Discount,
+        main="Box plot of discounts in sales2020",
+        cex.main=1,
+        xlab="Discount",
+        col=brewer.pal(4,"PRGn"),
+        las=1)
+#Present a histogram of all discounts
+disc_hist=hist(sales2020$Discount,
+        main="Histogram of discounts in sales2020",
+        cex.main=1,
+        xlab="Discount",
+        ylab="Frequency",
+        col=brewer.pal(8,"PuRd"),
+        breaks=15)
+```
+<FONT SIZE=3.5>
+<BR>It occurs to be a different scenario while presenting discounts. The above histogram depicts that products that have 0.0% discount are around 250 approx.From the box plot, we can depict that half(50%) of the products had discounts less than 10%.Also, the maximum discount given was 30%.
+
+<P>
+<BR><B>2.4 Box plot and histogram of numerical variable Profits.</B>
+</FONT>
+
+```{r Task 2.4 Boxplot and histogram of variable Profits}
+#Present a box plot of all profits
+par(mfcol=c(1,2),mai=c(1.6,1,0.4,1),mar=c(6.5, 6.5, 3, 4))
+pft_bar=boxplot(sales2020$Profits,
+        main="Box plot of Profits in sales2020",
+        cex.main=1,
+        xlab="Profits",
+        col=brewer.pal(4,"PRGn"),
+        las=1)
+#Present a histogram of all profits
+pft_hist=hist(sales2020$Profits,
+        main="Histogram of Profits in sales2020",
+        cex.main=1,
+        xlab="Profits",
+        ylab="Frequency",
+        col=brewer.pal(8,"PuRd"),
+        ylim=c(0,1000),
+        breaks=10)
+```
+<FONT SIZE=3.5>
+<BR> The above histogram and boxplot depicts that the majority of profit lie between 0 to 2000 approximately. Also, we can observe that there are negative values in the histogram indicating negative profits.We can focus on those products which attain negative profits for improving sales of the business.
+
+
+<BR><FONT SIZE=4><B>Task 3: Count and present categorical variable groups. </B></FONT>
+<FONT SIZE=3.5>
+<BR>The categorical variables I chose to group are: Market, Segment, Department and Division. The observations of each category are grouped(count is calculated with the observations of each category) using a table and presented.
+<P>
+<BR><B>3.1 Total Observations on categorical variable Market .</B>
+</FONT>
+```{r Task 3.1 To count the observations of market and present it using a bar graph}
+#Get the count of observations using table command
+mkt_tab <- table(sales2020$Market)
+mkt_data<-data.frame(mkt_tab)
+names(mkt_data)[1]<-"Markets"
+#present bar graph
+ggplot(mkt_data,aes(x=Freq,y=Markets,fill=Markets))+ggtitle("All categories of market and their frequencies")+labs(x="Count",y=" ")+ scale_fill_brewer(palette="Set2")+geom_bar(stat="identity")+geom_text(mapping=aes(label=Freq),position=position_dodge(width=0.9),cex=3,hjust=-0.1)
+```
+
+<FONT SIZE=3.5>
+<BR> From the above bar graph, we can infer that Asia Pacific has more orders when compared to other markets whereas Africa has the least number of orders. We can also see that the count in USCA is similar to half of the count in Asia Pacific.
+<P>
+<BR><B>3.2 Total Observations on categorical variable Division .</B>
+</FONT>
+
+```{r Task 3.2 To count the observations on variable division and present it using a bar graph}
+#Get the count of observations using table command
+dvs_tab <- table(sales2020$Division) 
+dvs_data<-data.frame(dvs_tab)
+#present bar graph
+ggplot(dvs_data,aes(x=Freq,y=Var1))+ggtitle("All categories of division and their frequencies")+labs(x="Count",y="Divisions")+geom_bar(stat="identity",fill="slateblue1")+geom_text(mapping=aes(label=Freq),position=position_dodge(width=0.9),cex=3,hjust=-0.1)
+
+```
+<FONT SIZE=3.5>
+<BR> From the above bar graph, we can infer that Chairs were ordered approximately 123 times resulting in most ordered division during 2020. Following that, copiers were ordered 120 times and the least ordered division is Fasteners with 8 orders.
+<P>
+<BR><B>3.3 Total Observations on categorical variable Segment .</B>
+</FONT>
+
+```{r Task 3.3 To count the observations on variable division and present it using a pie chart}
+#Get count using table command
+seg_tab<-table(sales2020$Segment)
+#Present pie chart
+pie(seg_tab,main="Segment Categories in sales2020",
+    col=brewer.pal(8,"PuRd"),
+    labels=paste(names(seg_tab),
+    sep=" ",round(100*seg_tab/sum(seg_tab),2),"%"))
+```
+<FONT SIZE=3.5>
+<BR> When compared to other segments,orders placed under Consumer segment have majorly contributed(55.3% approx.) to the store company whereas orders of Home office contributed 15.5% only. 
+<P>
+<BR><B>3.4 Total Observations on categorical variable Department .</B>
+</FONT>
+```{r Task 3.4 To count the observations on variable department and present it using a pie chart}
+#Get count using table command
+dept_tab<-table(sales2020$Department)
+#Present pie chart
+pie(dept_tab,main="Department Categories in sales2020",
+    col=brewer.pal(8,"Purples"),
+    labels=paste(names(dept_tab),
+    sep=" ",round(100*dept_tab/sum(dept_tab),2),"%"))
+```
+<FONT SIZE=3.5>
+<BR> When compared to other segments,orders placed under Technology department has majorly contributed(35.5% approx.) to the store company whereas orders for Furniture contributed 30.9% only. 
+
+<BR><FONT SIZE=4><B>Task 4: Business questions, statistics with sub-categories</B></FONT>
+<FONT SIZE=3.5>
+<BR>In this task, I will be combining three categorical and numerical variables. A suitable question combining a categorical and a numerical variable will be asked for which statistical interpretation will be performed and presented via a graph. 
+<P>
+<BR><B>4.1 What is the total quantity per division?.</B>
+<BR> In this task, we need to calculate the total number of quantities sold per division using tapply() function. Then, a bar plot is presented with the obtained results.
+</FONT>
+```{r Task 4.1 Total quantity per division}
+#find the sum of quantities grouped by division using tapply() command
+sum_qtydv <- tapply(sales2020$Quantity,sales2020$Division,sum)
+par(mar = c(8,8, 2, 0.5), mgp = c(5.5, 0.5, 0))
+#present bar plot
+qtydv_bar=barplot(sum_qtydv,
+              main="Total Quantity per Division",
+              xlab="Division",
+              ylab="Quantity",
+              cex.name="1",
+              cex.axis="1",
+              ylim=c(0,1000),
+              col=brewer.pal(5,"Purples"),
+              las=2)
+    text(y=sum_qtydv,
+    qtydv_bar,
+    round(sum_qtydv,2),
+    cex=0.8,
+    pos=3)
+    
+```
+<FONT SIZE=3.5>
+<BR><B>Observations:</B> From the above bar plot, we can see that maximum number of products(count=835) ordered in 2020 is Chairs whereas the least number of products ordered was Labels. Phones and storage almost has the same quantity of products ordered.
+<P>
+<BR><B>4.2 What is the average sales per market?.</B>
+<BR> In this task, we need to calculate the mean of sales grouped by each market using tapply() function. Then, a dot plot is presented with the obtained results.
+</FONT>
+```{r Task 4.2 Average sales per division ,warning=FALSE}
+#Calculate mean of sales grouped by each market using tapply() command.
+mean_salemk <- tapply(sales2020$Sales_Total,sales2020$Market,mean)
+#present dot chart.
+dotchart(mean_salemk,main="Dot plot of mean sales per Market")
+```
+
+<FONT SIZE=3.5>
+<BR><B>Observations:</B> The above dot chart depicts that Europe has the highest average sales(more than 3500 USD approx.) when compared to other markets.We can also observe that USCA has the least average sales(1600 USD approx.).The average sales in LATAM and Asia Pacific are almost similar.
+<P>
+<BR><B>4.3 What is the spread of shipping cost per segment?.</B>
+<BR> In this task, we need to calculate the standard deviation of shipping costs across each segment using tapply() command and present it using a pie chart.
+</FONT>
+
+```{r Task 4.3 Spread of shipping cost per segment}
+#calculate standard deviation of shipping costs grouped by segment using tapply() command
+sd_scseg <- tapply(sales2020$ShippingCost_Product,sales2020$Segment,sd)
+#present pie chart
+sc_pie=pie(sd_scseg,main="Shipping cost per segment in sales2020",
+       col=brewer.pal(8,"Pastel1"),
+       labels=paste(names(sd_scseg),
+       sep=" ",round(100*sd_scseg/sum(sd_scseg),2),"%"))
+    ```
+<FONT SIZE=3.5>
+<BR><B>Observations:</B> The above pie chart depicts that the spread of shipping costs is highest for consumer segment contributing 41.11%.
+<P><BR><FONT SIZE=4><B>Task 5: Data Filtration</B>
+<FONT SIZE=3.5>
+<BR>In this task, I will be choosing a category from Region i.e., Central America and I will be creating a new subset of data by filtering the data only for that category from sales2020. I chose question "What is the average Net Sale per Department?" for analyzing.Hence, I will be calculating and presenting the mean of net sales per department in Central America.
+</FONT>
+```{r Task 5 Mean of Net Sale per department in Central America }
+#Filter data with region as Central America using dplyr::filter() function.
+ca_data = dplyr::filter(sales2020, Region=="Central America")
+#Calculate average net sales per department using tapply() command.
+mean_netdpt <- tapply(ca_data$Net_Sale,ca_data$Department,mean)
+knitr::kable(mean_netdpt,col.names = "Mean of Net Sales")
+#Present bar plot
+par(mar = c(8, 6.5, 2, 0.5), mgp = c(3, 0.5, 0))
+ca_bar=barplot(mean_netdpt,
+              main="Average net sales per Department in Central America",
+              xlab="Department",
+              ylab="Net Sales",
+              cex.name="1",
+              cex.axis="1",
+              ylim=c(0,3000),
+              col="slateblue",
+              las=1)
+    text(y=mean_netdpt,
+    ca_bar,
+    round(mean_netdpt,2),
+    cex=0.8,
+    pos=3)
+    
+
+```
+<FONT SIZE=3.5>
+<BR><B>Observations:</B> In Central America,the average net sales of Furniture is the highest(2400 USD approx.) whereas the mean of net sales with respect to technology(2050 USD approx.) is the least when compared to other departments.
+</FONT>
+
+<BR><FONT SIZE=4><B>Task 6: Open Question - Compare the profits across each market.</B>
+<FONT SIZE=3.5>
+<BR> The open question I chose is what is the impact of profits on every market or comparison of profits across markets. Market is a categorical variable and Profits is a numerical variable. The approach here is to compare the profits of each and every market using box plots.
+</FONT>
+```{r Task 6 Comaprision of profits across each market}
+#present box plots
+par(mai=c(1.6,1.2,0.5,0.4),mar=c(6.5, 6.5, 0.9, 0.5),mgp=c(3, 1, 0))
+pf_plot=boxplot(sales2020$Profits~sales2020$Market,data=ca_data,
+        main= "Boxplot to compare profits across each market",
+        xlab = "Markets",
+        ylab="Profit",
+        col= "purple",
+        border="black",
+        ylim=c(0,6500),
+        cex.name=0.4,
+        cex.axis=0.8,
+        cex.main=0.9,
+        las=1
+        )
+```
+<FONT SIZE=3.5>
+<BR><B>Observations:</B> The following inferences can be made from the above box plots:
+<UL>
+<LI>Asia Pacific, Europe and LATAM contain negative profits and We can focus on these products producing negative profits to increase profits.
+<LI>While comparing markets, Europe has the highest profit value and more than 75% of the profits lie below 2000.
+<LI>The profits distribution in LATAM and USCA are symmetrical since the median and median are almost same in both the distributions.
+<LI>The outliers i.e.,values present away from the distribution are present in every market except Africa.
+<LI>The interquartile range(distance between the quartiles in boxplot) for USCA is comparatively less when compared to other markets.
+</UL>
+</FONT>
+
+<P>
+<BR><FONT SIZE=5, COLOR="#9e1306"><B>Conclusion</B></FONT>
+<P>
+<FONT SIZE=3.5>
+This project helped me gain a keen understanding on how to analyze, interpret and present data. Working with a real time data set, I gained exposure on how to handle data and form my own questions from it. Also, performing these descriptive statistical tasks enhanced my expertise level in R even more. 
+<BR>Visualizations using ggplot(),boxplot(),barplot() and hist(),etc. are extremely useful to understand the relationship between each variable in the data set. Before every task, I asked questions like what are the outcomes of this task, how the data can be analyzed from the particular task and how it would enhance the business methods.Asking these questions made it easier for me.
+<BR> Thus, I was able to analyze patterns from the huge data set and I understood that it can be used to predict revenues, increase in sales, profit/loss, etc. that can enhance businesses in a positive direction. 
+
+<P>
+<BR><FONT SIZE=5, COLOR="#9e1306"><B>Bibliography</B></FONT>
+<FONT SIZE=3.5>
+<P>Hooda, S. (2021, October 27). Top 10 Big Data Applications Across Industries. Simplilearn.Com. 
+https://www.simplilearn.com/tutorials/big-data-tutorial/big-data-applications
+<BR>Barash, R. (2019, January 14).The Power of Retail Analytics. yodlee.com.
+<BR>https://www.yodlee.com/data-analytics/big-data-retail-analytics
+Chiluiza, D. (2021, October 1). RPubs - Introduction to data analysis using R: Histograms. Rpubs.Com.
+<BR>https://rpubs.com/Dee_Chiluiza/816756
+</FONT>
+
+<P>
+<BR><FONT SIZE=5, COLOR="#9e1306"><B>Appendix</B></FONT>
+<FONT SIZE=3.5>
+<P>I am adding an additional file which contains the source R code for this report. I have attached the code file Rosary_Project6.Rmd.
+</FONT>
